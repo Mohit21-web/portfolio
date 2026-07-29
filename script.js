@@ -210,56 +210,96 @@ started = true;
 });
 
 const form = document.getElementById("contact-form");
-const popup = document.getElementById("success-popup");
-
-form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const data = new FormData(form);
-
-    await fetch("https://formsubmit.co/ajax/mohitsingh675787@gmail.com", {
-        method: "POST",
-        body: data
-    });
-
-    popup.classList.add("show");
-
-    form.reset();
-
-    setTimeout(() => {
-        popup.classList.remove("show");
-        window.location.href = "#home";
-    }, 3000);
-});
-
-const form = document.getElementById("contact-form");
 const result = document.getElementById("result");
 
 form.addEventListener("submit", async function (e) {
     e.preventDefault();
 
-    result.innerHTML = "Sending...";
+    result.innerHTML = "⏳ Sending Message...";
+    result.style.color = "#ffffff";
 
     const formData = new FormData(form);
 
-    const response = await fetch(form.action, {
-        method: "POST",
-        body: formData
-    });
+    try {
 
-    const data = await response.json();
+        const response = await fetch(form.action, {
+            method: "POST",
+            body: formData
+        });
 
-    if (data.success) {
-        result.innerHTML = "✅ Message sent successfully!";
-        result.style.color = "#00E5FF";
-        form.reset();
+        const data = await response.json();
 
-        setTimeout(() => {
-            result.innerHTML = "";
-        }, 4000);
+        if (data.success) {
+
+            result.innerHTML = `
+            <div class="success-box">
+                <div class="success-check">✓</div>
+                <h2>Thank You!</h2>
+                <p>Your message has been sent successfully.</p>
+            </div>
+            `;
+
+            form.reset();
+
+            setTimeout(() => {
+                result.innerHTML = "";
+            }, 4000);
+
+        } else {
+
+            result.innerHTML = "❌ Failed to send message.";
+            result.style.color = "red";
+
+        }
+
+    } catch (error) {
+
+        result.innerHTML = "❌ Network Error";
+        result.style.color = "red";
+
+    }
+
+});
+
+// Mobile Navbar
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const menuToggle = document.getElementById("menu-toggle");
+    const navLinks = document.getElementById("nav-links");
+
+    if (menuToggle && navLinks) {
+
+        menuToggle.addEventListener("click", function () {
+
+            navLinks.classList.toggle("active");
+
+            if (navLinks.classList.contains("active")) {
+                menuToggle.innerHTML = "✕";
+            } else {
+                menuToggle.innerHTML = "☰";
+            }
+
+        });
+
+        // Menu link click hone par menu close hoga
+        const links = navLinks.querySelectorAll("a");
+
+        links.forEach(function (link) {
+
+            link.addEventListener("click", function () {
+
+                navLinks.classList.remove("active");
+                menuToggle.innerHTML = "☰";
+
+            });
+
+        });
 
     } else {
-        result.innerHTML = "❌ Failed to send message.";
-        result.style.color = "red";
+
+        console.log("Mobile navbar elements not found");
+
     }
+
 });
